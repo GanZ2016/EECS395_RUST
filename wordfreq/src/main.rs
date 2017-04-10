@@ -1,26 +1,58 @@
-// word frequency
+/*word frequency
 
-// Reads text from the standard input and 
-// writes the frequency of different words to the standard output.
+Reads text from the standard input and 
+writes the frequency of different words to the standard output.
 
-// INPUT
+INPUT
 
-// The input format could be anything:
+The input format could be anything:
 
-//     Hello world
-//     www333
-//     github.com/rust
-//     *&^%$@!#@!
+    Hello world
+    www333
+    github.com/rust
+    *&^%$@!#@!
 
-// Any non-alphabetic character will be regarded as noise and will not be counted:
-//     ///233
-//     ++--
+Any non-alphabetic character will be regarded as noise and will not be counted:
+    ///233
+    ++--
 
-// The input terminates with either end-of-file or a line "999".
+The input terminates with either end-of-file or a line "999".
 
-// OUTPUT
+OUTPUT
 
-// The program computes the 
+The program computes the frequencies of input and show the words with their frequencies in descending order
+
+ASSUMPTIONS
+
+-   There is no limitation of the input, so it could be characters, numbers, or any legal special symbols
+
+-   The program only counts words, and a single character like 'x' is regarded as a word. Here are some special cases:
+    
+    INPUT:  1a2b3c
+            999
+    OUTPUT: b: 1
+            a: 1
+            c: 1
+    
+    INPUT:  What's your name
+            999
+    OUTPUT: s: 1
+            what: 1
+            name: 1
+            your: 1
+
+    INPUT:  999
+    OUTPUT: No word found.
+
+    INPUT:  a b  c   /a   ?b
+            c-- ..
+            999
+    OUTPUT: b: 2
+            a: 2
+            c: 2
+
+-   The terminator is a line of text "999" or the end of file, not a line of text that
+    when interpreted is merely the number 999.0.*/
 
 
 use std::io::{BufRead,BufReader,Read,stdin,Write,stdout};
@@ -29,8 +61,8 @@ use std::io::prelude::*;
 use std::collections::HashMap;
 fn main() {
     word_count(&read_input(stdin()))
-    //write_output(stdout());
 }
+//standard input and store the result in a string
 pub fn read_input<R: Read>(reader: R) -> String {
     let mut input = String::new();
     let mut lines = BufReader::new(reader).lines();
@@ -42,60 +74,47 @@ pub fn read_input<R: Read>(reader: R) -> String {
     }
     input
 }
-// #[cfg(test)]
-// mod read_lines_test {
-//     use super::read_lines;
-//     use std::io::Cursor;
+#[cfg(test)]
+mod read_lines_test {
+    use super::read_input;
+    use std::io::Cursor;
 
-//     #[test]
-//     fn reads_three_numbers() {
-//         assert_eq!("3.\n4.\n5.\n", read_lines("3.\n4.\n5.\n"));
-//     }
+    #[test]
+    fn reads_three_numbers() {
+        assert_eq!("2.3.4.5.6", read_input("2.3.4.5.6"));
+    }
 
-//     // fn assert_read(expected: &[f64], input: &str) {
-//     //     let mock_read = Cursor::new(input);
-//     //     let measurements = read_measurements(mock_read);
-//     //     assert_eq!(expected.to_owned(), measurements);
-//     // }
+    fn assert_read(expected: &[f64], input: &str) {
+        let mock_read = Cursor::new(input);
+        let test = read_input(mock_read);
+        assert_eq!(expected.to_owned(), test);
+    }
 
-// }
+}
 
 pub fn word_count(input: &str)  {
     let mut map: HashMap<String, u32> = HashMap::new();
-    let lower = input.to_lowercase();
+    let lower = input.to_lowercase(); //turn the input string into lowercase
     let slice: &str = lower.as_ref();
+    //split the input string and search the word in hashmap, get value and plus 1
     for word in slice.split(|c: char| !c.is_alphabetic()).filter(|s| !s.is_empty()) {
         *map.entry(word.to_string()).or_insert(0)+=1;
     }
-    
+    //sort the hashmap and put the result in a vector
     let mut count_vec: Vec<(&String, &u32)> = map.iter().collect();
     count_vec.sort_by(|a, b| b.1.cmp(a.1));
-    //println!("Most frequent character in text: {}: {}", count_vec[0].0, count_vec[0].1);
-    for i in 0..count_vec.len() {
-        let (key,value) = count_vec[i].clone();
-        println!("{}: {}", key, value);
-    }
-    
-    // let result : &Vec<(String,u32)>;
-    // Vec::from[count_vec];
-    // return result;
-    
+    //print elements in the vector line by line
+    write_output(stdout(),count_vec);
     
 }
 
-// pub fn write_output<W: Write>(mut writer: W) {
-//   //let m: HashMap<String, u32> = word_count(&read_input(stdin()));
-//   let m: Vec<(String,u32)> =  word_count(&read_input(stdin())); 
-//   if m.is_empty() {
-//       write!(writer, "No word found.\n").unwrap();
-//   } 
-//   else {
-//     //   for (key,value) in m.iter() {
-//     //       write!(writer,"{}: {}\n", key,value).unwrap();
-//     //   }
-//     for x in m.len() {
-//         write!(writer,"{} : {}", &m[x].0, &m[x].1).unwrap();
-//     }
-    
-//   }
-// }
+pub fn write_output<W: Write>(mut writer: W, r:Vec<(&String,&u32)>) {
+  if r.is_empty() {
+      write!(writer, "No word found.\n").unwrap();
+  } 
+  else {
+      for i in 0..r.len() {
+        let (key,value) = r[i].clone();
+        write!(writer,"{}: {}\n", key,value).unwrap();   
+  }
+}
