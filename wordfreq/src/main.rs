@@ -6,13 +6,6 @@ fn main() {
     //let text = read_lines();
     write_output(stdout());
 }
-
-pub fn read_lines() -> String{
-    let mut input = String::new();
-    io::stdin().read_line(&mut input).expect("Failed to read line");
-    input
-  }
-
 pub fn read_input<R: Read>(reader: R) -> String {
     let mut input = String::new();
     let mut lines = BufReader::new(reader).lines();
@@ -57,19 +50,6 @@ pub fn word_count(input: &str) -> HashMap<String, u32> {
     map
 }
 
-pub fn check_word_count(s: &str, pairs: Vec<(&str, u32)>) {
-    // The reason for the awkward code in here is to ensure that the failure
-    // message for assert_eq! is as informative as possible. A simpler
-    // solution would simply check the length of the map, and then
-    // check for the presence and value of each key in the given pairs vector.
-    let mut m: HashMap<String, u32> = word_count(s);
-    for &(k, v) in pairs.iter() {
-        assert_eq!((k, m.remove(&k.to_string()).unwrap_or(0)), (k, v));
-    }
-    // may fail with a message that clearly shows all extra pairs in the map
-    assert_eq!(m.iter().collect::<Vec<(&String,&u32)>>(), vec!());
-}
-
 pub fn write_output<W: Write>(mut writer: W) {
   let mut m: HashMap<String, u32> = word_count(&read_input(stdin()));
   if m.is_empty() {
@@ -82,54 +62,4 @@ pub fn write_output<W: Write>(mut writer: W) {
       //write!(writer,"{}\n",m::iter().key).unwrap();
       //write!(writer, "Below count:   {}\n", r.below).unwrap();
   }
-}
-
-// #[cfg(test)]
-mod check_word_count_test{
-    use super::check_word_count;
-    #[test]
-    fn test_count_one_word() {
-        check_word_count("word", vec![("word", 1)]);
-    }
-    #[test]
-    fn test_count_multiple_occurrences() {
-        check_word_count(
-            "one fish two fish red fish blue fish",
-            vec![("one", 1),
-                ("fish", 4),
-                ("two", 1),
-                ("red", 1),
-                ("blue", 1)]);
-    }
-
-    #[test]
-
-    fn test_ignore_punctuation() {
-        check_word_count(
-            "car : carpet as java : javascript!!&@$%^&",
-            vec![("car", 1),
-                ("carpet", 1),
-                ("as", 1),
-                ("java", 1),
-                ("javascript", 1)]);
-    }
-
-    #[test]
-
-    fn test_include_numbers() {
-        check_word_count(
-            "testing, 1, 2 testing",
-            vec![("testing", 2),
-                ("1", 1),
-                ("2", 1)]);
-    }
-
-    #[test]
-
-    fn test_normalize_case() {
-        check_word_count(
-            "go Go GO Stop stop",
-            vec![("go", 3),
-                ("stop", 2)]);
-    }
 }
