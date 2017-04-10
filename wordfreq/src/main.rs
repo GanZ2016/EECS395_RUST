@@ -1,3 +1,28 @@
+// word frequency
+
+// Reads text from the standard input and 
+// writes the frequency of different words to the standard output.
+
+// INPUT
+
+// The input format could be anything:
+
+//     Hello world
+//     www333
+//     github.com/rust
+//     *&^%$@!#@!
+
+// Any non-alphabetic character will be regarded as noise and will not be counted:
+//     ///233
+//     ++--
+
+// The input terminates with either end-of-file or a line "999".
+
+// OUTPUT
+
+// The program computes the 
+
+
 use std::io::{BufRead,BufReader,Read,stdin,Write,stdout};
 use std::io;
 use std::io::prelude::*;
@@ -34,24 +59,34 @@ pub fn read_input<R: Read>(reader: R) -> String {
 
 // }
 
-pub fn word_count(input: &str) -> HashMap<String, u32> {
+pub fn word_count(input: &str) -> HashMap<String, u32>  {
     let mut map: HashMap<String, u32> = HashMap::new();
     let lower = input.to_lowercase();
     let slice: &str = lower.as_ref();
     for word in slice.split(|c: char| !c.is_alphabetic()).filter(|s| !s.is_empty()) {
         *map.entry(word.to_string()).or_insert(0)+=1;
     }
-    map
+    {
+        let mut count_vec: Vec<(&String, &u32)> = map.iter().collect();
+    count_vec.sort_by(|a, b| b.1.cmp(a.1));
+    println!("Most frequent character in text: {}: {}", count_vec[0].0, count_vec[0].1);
+    }
+    return map;
 }
 
 pub fn write_output<W: Write>(mut writer: W) {
   let m: HashMap<String, u32> = word_count(&read_input(stdin()));
+  //let m: Vec<(&String,&u32)> =  word_count(&read_input(stdin())); 
   if m.is_empty() {
       write!(writer, "No word found.\n").unwrap();
   } 
   else {
       for (key,value) in m.iter() {
-          write!(writer,"{} {}\n", key, value).unwrap();
+          write!(writer,"{}: {}\n", key,value).unwrap();
       }
+    // for x in &m {
+    //     write!(writer,"{:?}\n", x).unwrap();
+    // }
+    
   }
 }
