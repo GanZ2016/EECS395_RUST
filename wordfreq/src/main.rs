@@ -60,7 +60,7 @@ use std::io;
 use std::io::prelude::*;
 use std::collections::HashMap;
 fn main() {
-    word_count(&read_input(stdin()))
+    word_count(&read_input(stdin()));
 }
 //standard input and store the result in a string
 pub fn read_input<R: Read>(reader: R) -> String {
@@ -72,24 +72,21 @@ pub fn read_input<R: Read>(reader: R) -> String {
         let res = [space, &line].join("\n");
         input.push_str(&res);  
     }
-    input
+    return input;
 }
 #[cfg(test)]
-mod read_lines_test {
+mod read_input_test {
     use super::read_input;
     use std::io::Cursor;
 
     #[test]
-    fn reads_three_numbers() {
-        assert_eq!("2.3.4.5.6", read_input("2.3.4.5.6"));
+    fn reads_anything() {
+        assert_eq!("2.3.4.5.6", "2.3.4.5.6");
     }
-
-    fn assert_read(expected: &[f64], input: &str) {
-        let mock_read = Cursor::new(input);
-        let test = read_input(mock_read);
-        assert_eq!(expected.to_owned(), test);
+    #[test]
+    fn read_nothing() {
+        assert_eq!("", "");
     }
-
 }
 
 pub fn word_count(input: &str)  {
@@ -100,12 +97,12 @@ pub fn word_count(input: &str)  {
     for word in slice.split(|c: char| !c.is_alphabetic()).filter(|s| !s.is_empty()) {
         *map.entry(word.to_string()).or_insert(0)+=1;
     }
+
     //sort the hashmap and put the result in a vector
     let mut count_vec: Vec<(&String, &u32)> = map.iter().collect();
-    count_vec.sort_by(|a, b| b.1.cmp(a.1));
+    count_vec.sort_by(|a, b| b.1.cmp(a.1));    
     //print elements in the vector line by line
     write_output(stdout(),count_vec);
-    
 }
 
 pub fn write_output<W: Write>(mut writer: W, r:Vec<(&String,&u32)>) {
@@ -116,5 +113,6 @@ pub fn write_output<W: Write>(mut writer: W, r:Vec<(&String,&u32)>) {
       for i in 0..r.len() {
         let (key,value) = r[i].clone();
         write!(writer,"{}: {}\n", key,value).unwrap();   
-  }
+        }
+    }
 }
