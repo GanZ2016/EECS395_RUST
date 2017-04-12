@@ -56,8 +56,6 @@ ASSUMPTIONS
 
 
 use std::io::{BufRead,BufReader,Read,stdin,Write,stdout};
-use std::io;
-use std::io::prelude::*;
 use std::collections::HashMap;
 fn main() {
     word_count(&read_input(stdin()));
