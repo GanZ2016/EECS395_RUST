@@ -81,11 +81,11 @@ mod read_input_test {
 
     #[test]
     fn reads_anything() {
-        assert_eq!("2.3.4.5.6", "2.3.4.5.6");
+        assert_read("\n2.3.4.5.6", "2.3.4.5.6");
     }
     #[test]
     fn read_nothing() {
-        assert_eq!("", "");
+        assert_read("", "");
     }
     fn assert_read(expected: &str, input: &str) {
     let reader = Cursor::new(input);
