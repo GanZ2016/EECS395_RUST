@@ -40,6 +40,8 @@ ASSUMPTIONS
             what: 1
             name: 1
             your: 1
+    Explanation:In our program, apostrophe(') is considered as a splitter, so "what's" is regared as two seperate words "what" and "s".
+                For the similar situation like "he's", "I'm" or "Let's", apostrophes are all regarded as splitters.
 
     INPUT:  999
     OUTPUT: No word found.
@@ -85,6 +87,11 @@ mod read_input_test {
     fn read_nothing() {
         assert_eq!("", "");
     }
+    fn assert_read(expected: &str, input: &str) {
+    let reader = Cursor::new(input);
+    let read = read_input(reader);
+    assert_eq!(expected.to_owned(), read);
+}
 }
 
 pub fn word_count(input: &str)  {
